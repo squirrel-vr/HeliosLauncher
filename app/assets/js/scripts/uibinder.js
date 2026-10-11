@@ -80,6 +80,11 @@ async function showMainUI(data){
             validateSelectedAccount()
         }
 
+        /**
+         * Discord auth and server membership validation
+         */
+
+
         if(ConfigManager.isFirstLaunch()){
             currentView = VIEWS.welcome
             $(VIEWS.welcome).fadeIn(1000)

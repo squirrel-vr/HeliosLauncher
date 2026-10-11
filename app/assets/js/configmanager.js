@@ -2,6 +2,7 @@ const fs   = require('fs-extra')
 const { LoggerUtil } = require('helios-core')
 const os   = require('os')
 const path = require('path')
+const axios = require('axios')
 
 const logger = LoggerUtil.getLogger('ConfigManager')
 
@@ -99,7 +100,19 @@ const DEFAULT_CONFIG = {
     selectedAccount: null,
     authenticationDatabase: {},
     modConfigurations: [],
-    javaConfig: {}
+    javaConfig: {},
+    discordAuth: {
+        auth: {
+            clientId: null,
+            redirectUri: ''
+        },
+        user: {
+            token: null,
+            refreshToken: null,
+            nickname: null
+        },
+        serverToValidate: null,
+    }
 }
 
 let config = null
@@ -790,4 +803,14 @@ exports.getAllowPrerelease = function(def = false){
  */
 exports.setAllowPrerelease = function(allowPrerelease){
     config.settings.launcher.allowPrerelease = allowPrerelease
+}
+
+
+/**
+ * @returns {boolean} Whether the user is logged in to Discord and is a part of specified server
+ * */
+exports.checkDiscordAuth = function () {
+    if (!config.discordAuth.user.token) return false;
+
+
 }

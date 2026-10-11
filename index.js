@@ -356,4 +356,6 @@ app.on('activate', () => {
     if (win === null) {
         createWindow()
     }
-})
+});
+
+app.setAsDefaultProtocolClient('vruamc')

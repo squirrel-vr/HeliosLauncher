@@ -14,6 +14,7 @@ const { LoggerUtil }         = require('helios-core')
 const { RestResponseStatus } = require('helios-core/common')
 const { MojangRestAPI, MojangErrorCode } = require('helios-core/mojang')
 const { MicrosoftAuth, MicrosoftErrorCode } = require('helios-core/microsoft')
+const crypto = require('crypto')
 const { AZURE_CLIENT_ID }    = require('./ipcconstants')
 const Lang = require('./langloader')
 
@@ -139,32 +140,46 @@ function mojangErrorDisplayable(errorCode) {
  * @param {string} password The account password.
  * @returns {Promise.<Object>} Promise which resolves the resolved authenticated account object.
  */
-exports.addMojangAccount = async function(username, password) {
-    try {
-        const response = await MojangRestAPI.authenticate(username, password, ConfigManager.getClientToken())
-        console.log(response)
-        if(response.responseStatus === RestResponseStatus.SUCCESS) {
+// exports.addMojangAccount = async function(username, password) {
+//     try {
+//         const response = await MojangRestAPI.authenticate(username, password, ConfigManager.getClientToken())
+//         console.log(response)
+//         if(response.responseStatus === RestResponseStatus.SUCCESS) {
+//
+//             const session = response.data
+//             if(session.selectedProfile != null){
+//                 const ret = ConfigManager.addMojangAuthAccount(session.selectedProfile.id, session.accessToken, username, session.selectedProfile.name)
+//                 if(ConfigManager.getClientToken() == null){
+//                     ConfigManager.setClientToken(session.clientToken)
+//                 }
+//                 ConfigManager.save()
+//                 return ret
+//             } else {
+//                 return Promise.reject(mojangErrorDisplayable(MojangErrorCode.ERROR_NOT_PAID))
+//             }
+//
+//         } else {
+//             return Promise.reject(mojangErrorDisplayable(response.mojangErrorCode))
+//         }
+//
+//     } catch (err){
+//         log.error(err)
+//         return Promise.reject(mojangErrorDisplayable(MojangErrorCode.UNKNOWN))
+//     }
+// }
 
-            const session = response.data
-            if(session.selectedProfile != null){
-                const ret = ConfigManager.addMojangAuthAccount(session.selectedProfile.id, session.accessToken, username, session.selectedProfile.name)
-                if(ConfigManager.getClientToken() == null){
-                    ConfigManager.setClientToken(session.clientToken)
-                }
-                ConfigManager.save()
-                return ret
-            } else {
-                return Promise.reject(mojangErrorDisplayable(MojangErrorCode.ERROR_NOT_PAID))
-            }
+function offlineUUID(name) {
+    const hash = crypto.createHash('md5').update('OfflinePlayer:' + name).digest()
+    hash[6] = (hash[6] & 0x0f) | 0x30
+    hash[8] = (hash[8] & 0x3f) | 0x80
+    return hash.toString('hex')
+}
 
-        } else {
-            return Promise.reject(mojangErrorDisplayable(response.mojangErrorCode))
-        }
-        
-    } catch (err){
-        log.error(err)
-        return Promise.reject(mojangErrorDisplayable(MojangErrorCode.UNKNOWN))
-    }
+exports.addMojangAccount = async function(username, password = null) {
+    const name = username.trim()
+    const ret = ConfigManager.addMojangAuthAccount(offlineUUID(name), 'offline', name, name)
+    ConfigManager.save()
+    return ret
 }
 
 const AUTH_MODE = { FULL: 0, MS_REFRESH: 1, MC_REFRESH: 2 }
@@ -274,7 +289,11 @@ exports.addMicrosoftAccount = async function(authCode) {
  * @returns {Promise.<void>} Promise which resolves to void when the action is complete.
  */
 exports.removeMojangAccount = async function(uuid){
-    try {
+    ConfigManager.removeAuthAccount(uuid)
+    ConfigManager.save()
+    return Promise.resolve()
+
+    /*try {
         const authAcc = ConfigManager.getAuthAccount(uuid)
         const response = await MojangRestAPI.invalidate(authAcc.accessToken, ConfigManager.getClientToken())
         if(response.responseStatus === RestResponseStatus.SUCCESS) {
@@ -288,7 +307,7 @@ exports.removeMojangAccount = async function(uuid){
     } catch (err){
         log.error('Error while removing account', err)
         return Promise.reject(err)
-    }
+    }*/
 }
 
 /**
@@ -318,6 +337,8 @@ exports.removeMicrosoftAccount = async function(uuid){
  * otherwise false.
  */
 async function validateSelectedMojangAccount(){
+    return true //yarr!
+
     const current = ConfigManager.getSelectedAccount()
     const response = await MojangRestAPI.validate(current.accessToken, ConfigManager.getClientToken())
 

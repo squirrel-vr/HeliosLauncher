@@ -40,6 +40,11 @@ loginWithMicrosoft = "Login with Microsoft"
 loginWithMojang = "Login with Offline Account"
 cancelButton = "Cancel"
 
+[ejs.discordLogin]
+title = "In order to use this launcher you must confirm that you are a member of VR Ukraine Discord Community"
+login = "Log in with Discord to continue"
+
+
 [ejs.overlay]
 serverSelectHeader = "Available Servers"
 serverSelectConfirm = "Select"
@@ -122,6 +127,7 @@ launcherUpdatesHeaderDesc = "Download, install, and review updates for the launc
 checkForUpdates = "Check for Updates"
 whatsNew = "What's New"
 updateReleaseNotes = "Update Release Notes"
+discordAccount = "Discord Account"
 
 [ejs.waiting]
 waitingText = "Waiting for Microsoft.."
@@ -239,6 +245,12 @@ selectedButton = "Selected Account &#10004;"
 [js.settings.authAccountLogout]
 lastAccountWarningTitle = "Warning<br>This is Your Last Account"
 lastAccountWarningMessage = "In order to use the launcher you must be logged into at least one account. You will need to login again after.<br><br>Are you sure you want to log out?"
+confirmButton = "I'm Sure"
+cancelButton = "Cancel"
+
+[js.settings.discordAccountLogout]
+lastAccountWarningTitle = "Warning<br>You're about to log out from your Discord account"
+lastAccountWarningMessage = "In order to use the launcher you must be logged into a Discord account that is a member of VR Ukraine community. You will be directed to login page where you can sign in again or change an account. Your other accounts (Offline and/or Microsoft) will remain intact.<br><br>Are you sure you want to log out?"
 confirmButton = "I'm Sure"
 cancelButton = "Cancel"
 

@@ -10,9 +10,9 @@ const isDev                             = require('./app/assets/js/isdev')
 const path                              = require('path')
 const semver                            = require('semver')
 const { pathToFileURL }                 = require('url')
-const { AZURE_CLIENT_ID, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE } = require('./app/assets/js/ipcconstants')
+const { AZURE_CLIENT_ID, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE, DISCORD_OPCODE } = require('./app/assets/js/ipcconstants')
 const LangLoader                        = require('./app/assets/js/langloader')
-
+const discordDefaultConfig = require('./app/assets/js/discorddefaultconfig');
 // Setup Lang
 LangLoader.setupLanguage()
 
@@ -218,6 +218,80 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
     msftLogoutWindow.loadURL('https://login.microsoftonline.com/common/oauth2/v2.0/logout')
 })
 
+
+// Discord Auth
+let dsLoginWindow
+let dsLoginSuccess = false
+ipcMain.on(DISCORD_OPCODE.OPEN_LOGIN, async (ipcEvent) => {
+    console.log('here')
+    dsLoginWindow = new BrowserWindow({
+        title: LangLoader.queryJS('index.microsoftLoginTitle'),
+        backgroundColor: '#222222',
+        width: 520,
+        height: 600,
+        frame: true,
+    })
+
+    dsLoginWindow.on('closed', () => {
+        dsLoginWindow = undefined
+    })
+
+    dsLoginWindow.on('close', () => {
+        if(!dsLoginSuccess) {
+            ipcEvent.reply(DISCORD_OPCODE.REPLY_LOGIN, 'error')
+        }
+    })
+
+    const array = new Uint32Array(16)
+    crypto.getRandomValues(array)
+
+    const verifier = Array.from(array, dec => dec.toString(16).padStart(2, '0')).join('')
+
+    const encoder = new TextEncoder()
+    const data = encoder.encode(verifier)
+    const digest = await crypto.subtle.digest('SHA-256', data);
+    const challenge = btoa(String.fromCharCode(...new Uint8Array(digest)))
+        .replace(/\+/g, '-')
+        .replace(/\//g, '_')
+        .replace(/=+$/, '')
+
+    dsLoginWindow.webContents.on('did-navigate', (_, uri) => {
+        console.log(uri)
+        if (uri.includes('example.com') && uri.includes('code=')) {
+            let queryMap = {}
+
+            console.log(uri)
+
+            new URL(uri).searchParams.forEach((v, k) => {
+                queryMap[k] = v
+            })
+
+            console.log(queryMap.code)
+
+            dsLoginSuccess = true
+            dsLoginWindow.close()
+            dsLoginWindow = null
+
+            ipcEvent.reply(DISCORD_OPCODE.REPLY_LOGIN, queryMap.code, verifier)
+        }
+    })
+
+    const url = new URL('https://discord.com/oauth2/authorize')
+    const params = new URLSearchParams({
+        client_id: discordDefaultConfig.default.clientId,
+        response_type: 'code',
+        redirect_uri: 'http://example.com',
+        scope: 'identify+guilds',
+        code_challenge: challenge,
+        code_challenge_method: 'S256'
+    })
+
+    url.search = params.toString()
+
+    dsLoginWindow.removeMenu()
+    dsLoginWindow.loadURL(url.toString())
+})
+
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
@@ -356,6 +430,6 @@ app.on('activate', () => {
     if (win === null) {
         createWindow()
     }
-});
+})
 
 app.setAsDefaultProtocolClient('vruamc')

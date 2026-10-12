@@ -9,6 +9,7 @@ const { Type }      = require('helios-distribution-types')
 const AuthManager   = require('./assets/js/authmanager')
 const ConfigManager = require('./assets/js/configmanager')
 const { DistroAPI } = require('./assets/js/distromanager')
+const DiscordAuth   = require('./assets/js/discordAuth')
 
 let rscShouldLoad = false
 let fatalStartupError = false
@@ -16,11 +17,12 @@ let fatalStartupError = false
 // Mapping of each view to their container IDs.
 const VIEWS = {
     landing: '#landingContainer',
+    loginDiscord: '#loginDiscordContainer',
     loginOptions: '#loginOptionsContainer',
     login: '#loginContainer',
     settings: '#settingsContainer',
     welcome: '#welcomeContainer',
-    waiting: '#waitingContainer'
+    waiting: '#waitingContainer',
 }
 
 // The currently shown view container.
@@ -67,7 +69,7 @@ async function showMainUI(data){
     await prepareSettings(true)
     updateSelectedServer(data.getServerById(ConfigManager.getSelectedServer()))
     refreshServerStatus()
-    setTimeout(() => {
+    setTimeout(async () => {
         document.getElementById('frameBar').style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
         document.body.style.backgroundImage = `url('assets/images/backgrounds/${document.body.getAttribute('bkid')}.jpg')`
         $('#main').show()
@@ -80,16 +82,20 @@ async function showMainUI(data){
             validateSelectedAccount()
         }
 
-        /**
-         * Discord auth and server membership validation
-         */
+        const dsAuth = await DiscordAuth.checkDiscordAuth()
 
+        console.log(dsAuth)
 
         if(ConfigManager.isFirstLaunch()){
             currentView = VIEWS.welcome
             $(VIEWS.welcome).fadeIn(1000)
         } else {
-            if(isLoggedIn){
+            if (!dsAuth.result){
+                if (dsAuth.error === 'Auth error'){
+                    currentView = VIEWS.loginDiscord
+                    $(VIEWS.loginDiscord).fadeIn(1000)
+                }
+            }else if(isLoggedIn){
                 currentView = VIEWS.landing
                 $(VIEWS.landing).fadeIn(1000)
             } else {

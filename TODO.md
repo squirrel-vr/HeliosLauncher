@@ -1,5 +1,6 @@
 ## TODO: 
-- [ ] Discord login and validation on each launch
+- [x] Discord login and validation on each launch
+  - [ ] Handle an error when user is not a part of designated discord server
 - [ ] UI overhaul (images, icons, remove unused UI elements)
   - Server status (bound to Westeros)
   - Mojang status (fuck them guys)

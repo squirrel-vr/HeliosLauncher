@@ -11,7 +11,7 @@ const dataPath = path.join(sysRoot, '.helioslauncher')
 
 const launcherDir = require('@electron/remote').app.getPath('userData')
 
-const discordDefaultConfig = require('./discorddefaultconfig').default
+const discordDefaultConfig = require('./discordDefaultConfig').default
 
 /**
  * Retrieve the absolute path of the launcher directory.

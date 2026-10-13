@@ -39,16 +39,16 @@
                                 </svg>
                             </a>
                         </div>
-<!--                        <div class="mediaContainer">-->
-<!--                            <a href="<%- lang('landing.mediaXURL') %>" class="mediaURL" id="xURL">-->
-<!--                                <svg id="xSVG" class="mediaSVG" viewBox="0 0 275 275">-->
-<!--                                    <g>-->
-<!--                                        <path d="m236 0h46l-101 115 118 156h-92.6l-72.5-94.8-83 94.8h-46l107-123-113-148h94.9l65.5 86.6zm-16.1 244h25.5l-165-218h-27.4z"/>-->
-<!--                                    </g>-->
-<!--                                </svg>-->
-<!--                            </a>-->
-<!--                        </div>-->
-                        <!--<div class="mediaContainer">
+                        <div class="mediaContainer" style="display: none;">
+                            <a href="<%- lang('landing.mediaXURL') %>" class="mediaURL" id="xURL">
+                                <svg id="xSVG" class="mediaSVG" viewBox="0 0 275 275">
+                                    <g>
+                                        <path d="m236 0h46l-101 115 118 156h-92.6l-72.5-94.8-83 94.8h-46l107-123-113-148h94.9l65.5 86.6zm-16.1 244h25.5l-165-218h-27.4z"/>
+                                    </g>
+                                </svg>
+                            </a>
+                        </div>
+                        <div class="mediaContainer" style="display: none;">
                             <a href="<%- lang('landing.mediaInstagramURL') %>" class="mediaURL" id="instagramURL">
                                 <svg id="instagramSVG" class="mediaSVG" viewBox="0 0 5040 5040">
                                     <defs>
@@ -67,8 +67,8 @@
                                     </g>
                                 </svg>
                             </a>
-                        </div>-->
-                        <div class="mediaContainer">
+                        </div>
+                        <div class="mediaContainer" style="display: none;">
                             <a href="<%- lang('landing.mediaYouTubeURL') %>" class="mediaURL" id="youtubeURL">
                                 <svg id="youtubeSVG" class="mediaSVG" viewBox="35.34 34.3575 70.68 68.71500">
                                     <g>
@@ -93,14 +93,14 @@
     </div>
     <div id="lower">
         <div id="left">
-            <div class="bot_wrapper">
+            <div class="bot_wrapper" >
                 <div id="content">
                     <div id="server_status_wrapper">
                         <span class="bot_label" id="landingPlayerLabel"><%- lang('landing.serverStatus') %></span>
                         <span id="player_count"><%- lang('landing.serverStatusPlaceholder') %></span>
                     </div>
-                    <div class="bot_divider"></div>
-                    <div id="mojangStatusWrapper">
+                    <div class="bot_divider" style="display: none"></div>
+                    <div id="mojangStatusWrapper" style="display: none;">
                         <span class="bot_label"><%- lang('landing.mojangStatus') %></span>
                         <span id="mojang_status_icon">&#8226;</span>
                         <div id="mojangStatusTooltip">

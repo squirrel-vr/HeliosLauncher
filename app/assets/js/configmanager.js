@@ -831,6 +831,3 @@ exports.removeDiscordUser = function () {
 
     save()
 }
-
-//todo: remove before prod
-exports.getConfig = () => config

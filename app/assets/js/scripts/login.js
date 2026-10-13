@@ -52,8 +52,6 @@ function shakeError(element){
  * @param {string} value The email value.
  */
 function validateEmail(value){
-    console.log(value, validUsername.test(value))
-
     if(value){
         if(!validUsername.test(value)){
             showError(loginEmailError, Lang.queryJS('login.error.invalidValue'))
@@ -118,7 +116,6 @@ loginUsername.addEventListener('input', (e) => {
  * @param {boolean} v True to enable, false to disable.
  */
 function loginDisabled(v){
-    console.log(v)
     if(loginButton.disabled !== v){
         loginButton.disabled = v
     }

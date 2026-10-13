@@ -36,7 +36,7 @@ webFrame.setZoomLevel(0)
 webFrame.setVisualZoomLevelLimits(1, 1)
 
 // Initialize auto updates in production environments.
-let updateCheckListener
+/*let updateCheckListener
 if(!isDev){
     ipcRenderer.on('autoUpdateNotification', (event, arg, info) => {
         switch(arg){
@@ -90,7 +90,7 @@ if(!isDev){
                 break
         }
     })
-}
+}*/
 
 /**
  * Send a notification to the main process changing the value of

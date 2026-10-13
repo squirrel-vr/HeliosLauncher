@@ -2,18 +2,19 @@ const axios = require('axios')
 const ipcRenderer = require('electron').ipcRenderer
 const ConfigManager = require('./configmanager')
 const {DISCORD_OPCODE} = require('./ipcconstants')
+const Lang = require('./langloader')
 
 /**
  *
  * @param {boolean} retry Whether this func called again after token refresh. If true, do not handle auth errors
- * @returns {boolean} Whether the user is logged in to Discord and is a part of specified server
+ * @returns {boolean} Whether the user is logged in to Discord and is a part of a specified server
  * */
 async function checkDiscordAuth(retry = false) {
     ConfigManager.bootstrapDiscordConfig()
 
     const user = ConfigManager.getDiscordAuthUser()
 
-    if (!user.nickname) return {result: false, error: 'Auth error'}
+    if (!user.id) return {result: false, error: Lang.queryEJS('discordLogin.authError')}
 
     const {accessToken} = user
 
@@ -40,7 +41,7 @@ async function checkDiscordAuth(retry = false) {
             }
         }
 
-        return {result: false, error: 'Not a member of server'}
+        return {result: false, error: Lang.queryEJS('discordLogin.notAMemeber')}
     } catch (error) {
         if (error.response && error.response.status === 401 && !retry) {
             await refreshDiscrodToken()
@@ -49,7 +50,7 @@ async function checkDiscordAuth(retry = false) {
 
         console.error(error)
 
-        return {result: false, error: 'Auth error'}
+        return {result: false, error: Lang.queryEJS('discordLogin.authError')}
     }
 }
 

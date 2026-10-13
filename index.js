@@ -12,10 +12,10 @@ const semver                            = require('semver')
 const { pathToFileURL }                 = require('url')
 const { AZURE_CLIENT_ID, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE, DISCORD_OPCODE } = require('./app/assets/js/ipcconstants')
 const LangLoader                        = require('./app/assets/js/langloader')
-const discordDefaultConfig = require('./app/assets/js/discorddefaultconfig');
+const discordDefaultConfig = require('./app/assets/js/discorddefaultconfig')
 // Setup Lang
 LangLoader.setupLanguage()
-
+/*
 // Setup auto updater.
 function initAutoUpdater(event, data) {
 
@@ -83,7 +83,7 @@ ipcMain.on('autoUpdateAction', (event, arg, data) => {
             console.log('Unknown argument', arg)
             break
     }
-})
+})*/
 // Redirect distribution index event from preloader to renderer.
 ipcMain.on('distributionIndexDone', (event, res) => {
     event.sender.send('distributionIndexDone', res)
@@ -223,7 +223,6 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
 let dsLoginWindow
 let dsLoginSuccess = false
 ipcMain.on(DISCORD_OPCODE.OPEN_LOGIN, async (ipcEvent) => {
-    console.log('here')
     dsLoginWindow = new BrowserWindow({
         title: LangLoader.queryJS('index.microsoftLoginTitle'),
         backgroundColor: '#222222',
@@ -256,17 +255,12 @@ ipcMain.on(DISCORD_OPCODE.OPEN_LOGIN, async (ipcEvent) => {
         .replace(/=+$/, '')
 
     dsLoginWindow.webContents.on('did-navigate', (_, uri) => {
-        console.log(uri)
         if (uri.includes('example.com') && uri.includes('code=')) {
             let queryMap = {}
-
-            console.log(uri)
 
             new URL(uri).searchParams.forEach((v, k) => {
                 queryMap[k] = v
             })
-
-            console.log(queryMap.code)
 
             dsLoginSuccess = true
             dsLoginWindow.close()
@@ -431,5 +425,3 @@ app.on('activate', () => {
         createWindow()
     }
 })
-
-app.setAsDefaultProtocolClient('vruamc')

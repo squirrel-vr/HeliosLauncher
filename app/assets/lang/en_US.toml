@@ -43,6 +43,8 @@ cancelButton = "Cancel"
 [ejs.discordLogin]
 title = "In order to use this launcher you must confirm that you are a member of VR Ukraine Discord Community"
 login = "Log in with Discord to continue"
+authError = "Authenticaion Error. Please, try again later or log in into different account"
+notAMemeber = "You're not a member of VR Ukraine Discord community. Please join our community or log in into an account that is a member of VR Ukraine Discord server."
 
 
 [ejs.overlay]
@@ -67,8 +69,8 @@ tabAccountHeaderText = "Account Settings"
 tabAccountHeaderDesc = "Add new accounts or manage existing ones."
 microsoftAccount = "Microsoft"
 addMicrosoftAccount = "+ Add Microsoft Account"
-mojangAccount = "Mojang"
-addMojangAccount = "+ Add Mojang Account"
+mojangAccount = "Offline Profiles"
+addMojangAccount = "+ Add Offline Profile"
 minecraftTabHeaderText = "Minecraft Settings"
 minecraftTabHeaderDesc = "Options related to game launch."
 gameResolutionTitle = "Game Resolution"
@@ -127,7 +129,7 @@ launcherUpdatesHeaderDesc = "Download, install, and review updates for the launc
 checkForUpdates = "Check for Updates"
 whatsNew = "What's New"
 updateReleaseNotes = "Update Release Notes"
-discordAccount = "Discord Account"
+discordAccount = "Discord"
 
 [ejs.waiting]
 waitingText = "Waiting for Microsoft.."

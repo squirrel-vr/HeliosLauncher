@@ -84,17 +84,18 @@ async function showMainUI(data){
 
         const dsAuth = await DiscordAuth.checkDiscordAuth()
 
-        console.log(dsAuth)
-
         if(ConfigManager.isFirstLaunch()){
             currentView = VIEWS.welcome
             $(VIEWS.welcome).fadeIn(1000)
         } else {
             if (!dsAuth.result){
-                if (dsAuth.error === 'Auth error'){
-                    currentView = VIEWS.loginDiscord
-                    $(VIEWS.loginDiscord).fadeIn(1000)
+                //if user exists in the config but auth check returns an error anyway
+                if (ConfigManager.getDiscordAuthUser().id) {
+                    $('#loginDiscordError').text(dsAuth.error).show()
                 }
+
+                currentView = VIEWS.loginDiscord
+                $(VIEWS.loginDiscord).fadeIn(1000)
             }else if(isLoggedIn){
                 currentView = VIEWS.landing
                 $(VIEWS.landing).fadeIn(1000)

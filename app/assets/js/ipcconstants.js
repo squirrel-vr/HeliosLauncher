@@ -31,3 +31,5 @@ exports.DISCORD_OPCODE = {
     OPEN_LOGIN: 'DISCORD_AUTH_OPEN_LOGIN',
     REPLY_LOGIN: 'DISCORD_AUTH_REPLY_LOGIN'
 }
+
+exports.REMOTE_BACKGROUND_IMAGES_URL = 'https://helios.vr-ukraine.com/backgrounds'

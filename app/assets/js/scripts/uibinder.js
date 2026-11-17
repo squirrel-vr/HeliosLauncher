@@ -71,7 +71,13 @@ async function showMainUI(data){
     refreshServerStatus()
     setTimeout(async () => {
         document.getElementById('frameBar').style.backgroundColor = 'rgba(0, 0, 0, 0.5)'
-        document.body.style.backgroundImage = `url('assets/images/backgrounds/${document.body.getAttribute('bkid')}.jpg')`
+
+        const backgroundImage = document.body.getAttribute('bkid')
+
+        document.body.style.backgroundImage = backgroundImage.includes('http')
+            ? `url(${backgroundImage})`
+            : `url('assets/images/backgrounds/${backgroundImage}.jpg')`
+
         $('#main').show()
 
         const isLoggedIn = Object.keys(ConfigManager.getAuthAccounts()).length > 0

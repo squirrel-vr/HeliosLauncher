@@ -1,8 +1,8 @@
 {
-  "name": "helioslauncher",
-  "version": "2.2.1",
-  "productName": "Helios Launcher",
-  "description": "Modded Minecraft Launcher",
+  "name": "vrua-helioslauncher",
+  "version": "2.2.2",
+  "productName": "VR Ukraine MC Launcher",
+  "description": "Modded Minecraft Launcher for VR Ukraine Community",
   "author": "Daniel Scalzi (https://github.com/dscalzi/)",
   "license": "UNLICENSED",
   "homepage": "https://github.com/dscalzi/HeliosLauncher",
@@ -20,7 +20,7 @@
     "lint": "eslint ."
   },
   "engines": {
-    "node": "22.x.x"
+    "node": "24.x.x"
   },
   "dependencies": {
     "@electron/remote": "^2.1.3",

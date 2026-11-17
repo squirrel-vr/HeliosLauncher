@@ -10,7 +10,7 @@ const isDev                             = require('./app/assets/js/isdev')
 const path                              = require('path')
 const semver                            = require('semver')
 const { pathToFileURL }                 = require('url')
-const { AZURE_CLIENT_ID, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE, DISCORD_OPCODE } = require('./app/assets/js/ipcconstants')
+const { AZURE_CLIENT_ID, MSFT_OPCODE, MSFT_REPLY_TYPE, MSFT_ERROR, SHELL_OPCODE, DISCORD_OPCODE, REMOTE_BACKGROUND_IMAGES_URL } = require('./app/assets/js/ipcconstants')
 const LangLoader                        = require('./app/assets/js/langloader')
 const discordDefaultConfig = require('./app/assets/js/discordDefaultConfig')
 // Setup Lang
@@ -290,7 +290,7 @@ ipcMain.on(DISCORD_OPCODE.OPEN_LOGIN, async (ipcEvent) => {
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-function createWindow() {
+async function createWindow() {
 
     win = new BrowserWindow({
         width: 980,
@@ -306,8 +306,20 @@ function createWindow() {
     })
     remoteMain.enable(win.webContents)
 
+    let bkid
+
+    if (REMOTE_BACKGROUND_IMAGES_URL) {
+        const response = await fetch(REMOTE_BACKGROUND_IMAGES_URL)
+        const text = await response.text()
+
+        const urls = text.split('|||').map(url => url.trim()).filter(url => !!url)
+        bkid = urls[Math.floor((Math.random() * urls.length))]
+    } else {
+        bkid = Math.floor((Math.random() * fs.readdirSync(path.join(__dirname, 'app', 'assets', 'images', 'backgrounds')).length))
+    }
+
     const data = {
-        bkid: Math.floor((Math.random() * fs.readdirSync(path.join(__dirname, 'app', 'assets', 'images', 'backgrounds')).length)),
+        bkid,
         lang: (str, placeHolders) => LangLoader.queryEJS(str, placeHolders)
     }
     Object.entries(data).forEach(([key, val]) => ejse.data(key, val))

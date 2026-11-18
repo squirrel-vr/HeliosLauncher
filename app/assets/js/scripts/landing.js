@@ -37,12 +37,43 @@ const launch_details          = document.getElementById('launch_details')
 const launch_progress         = document.getElementById('launch_progress')
 const launch_progress_label   = document.getElementById('launch_progress_label')
 const launch_details_text     = document.getElementById('launch_details_text')
+const launch_button           = document.getElementById('launch_button')
+const launch_button_label     = document.getElementById('launch_button_label')
 const server_selection_button = document.getElementById('server_selection_button')
+const server_selection_name   = document.getElementById('server_selection_name')
 const user_text               = document.getElementById('user_text')
 
 const loggerLanding = LoggerUtil.getLogger('Landing')
 
 /* Launch Progress Wrapper Functions */
+
+// wich text goes on the play button for each launch step
+const LAUNCH_STATE_BY_DETAILS = [
+    ['landing.launch.pleaseWait', 'validating'],
+    ['landing.dlAsync.pleaseWait', 'validating'],
+    ['landing.dlAsync.loadingServerInfo', 'validating'],
+    ['landing.dlAsync.validatingFileIntegrity', 'validating'],
+    ['landing.systemScan.checking', 'validating'],
+    ['landing.systemScan.javaDownloadPrepare', 'downloading'],
+    ['landing.dlAsync.downloadingFiles', 'downloading'],
+    ['landing.downloadJava.extractingJava', 'downloading'],
+    ['landing.downloadJava.javaInstalled', 'starting'],
+    ['landing.dlAsync.preparingToLaunch', 'starting'],
+    ['landing.dlAsync.launchingGame', 'starting'],
+    ['landing.dlAsync.doneEnjoyServer', 'starting']
+]
+
+function setPlayButtonState(state){
+    launch_button.dataset.state = state
+    const busy = state === 'downloading' || state === 'validating' || state === 'starting'
+    if(busy){
+        launch_button.setAttribute('aria-busy', 'true')
+    } else {
+        launch_button.removeAttribute('aria-busy')
+    }
+    launch_button.setAttribute('aria-disabled', String(busy || launch_button.disabled))
+    launch_button_label.textContent = Lang.queryJS(`landing.launchState.${state === 'unavailable' ? 'default' : state}`)
+}
 
 /**
  * Show/hide the loading area.
@@ -51,11 +82,13 @@ const loggerLanding = LoggerUtil.getLogger('Landing')
  */
 function toggleLaunchArea(loading){
     if(loading){
-        launch_details.style.display = 'flex'
-        launch_content.style.display = 'none'
+        launch_details.classList.add('is-visible')
+        if(launch_button.dataset.state === 'default' || launch_button.dataset.state === 'unavailable'){
+            setPlayButtonState('validating')
+        }
     } else {
-        launch_details.style.display = 'none'
-        launch_content.style.display = 'inline-flex'
+        launch_details.classList.remove('is-visible')
+        setPlayButtonState(launch_button.disabled ? 'unavailable' : 'default')
     }
 }
 
@@ -66,6 +99,13 @@ function toggleLaunchArea(loading){
  */
 function setLaunchDetails(details){
     launch_details_text.innerHTML = details
+    const plain = String(details).replace(/\.+$/, '')
+    for(const [key, state] of LAUNCH_STATE_BY_DETAILS){
+        if(plain === String(Lang.queryJS(key)).replace(/\.+$/, '')){
+            setPlayButtonState(state)
+            break
+        }
+    }
 }
 
 /**
@@ -74,8 +114,9 @@ function setLaunchDetails(details){
  * @param {number} percent Percentage (0-100)
  */
 function setLaunchPercentage(percent){
-    launch_progress.setAttribute('max', 100)
-    launch_progress.setAttribute('value', percent)
+    const p = Math.max(0, Math.min(100, Number(percent) || 0))
+    launch_progress.style.setProperty('--progress', String(p / 100))
+    launch_details.setAttribute('aria-valuenow', String(Math.round(p)))
     launch_progress_label.innerHTML = percent + '%'
 }
 
@@ -95,11 +136,15 @@ function setDownloadPercentage(percent){
  * @param {boolean} val True to enable, false to disable.
  */
 function setLaunchEnabled(val){
-    document.getElementById('launch_button').disabled = !val
+    launch_button.disabled = !val
+    if(!launch_button.hasAttribute('aria-busy')){
+        setPlayButtonState(val ? 'default' : 'unavailable')
+    }
 }
 
 // Bind launch button
 document.getElementById('launch_button').addEventListener('click', async e => {
+    if(launch_button.hasAttribute('aria-busy')) return
     loggerLanding.info('Launching game..')
     try {
         const server = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
@@ -163,16 +208,16 @@ function updateSelectedServer(serv){
     }
     ConfigManager.setSelectedServer(serv != null ? serv.rawServer.id : null)
     ConfigManager.save()
-    server_selection_button.innerHTML = '&#8226; ' + (serv != null ? serv.rawServer.name : Lang.queryJS('landing.noSelection'))
+    server_selection_name.textContent = serv != null ? serv.rawServer.name : Lang.queryJS('landing.selectedServer.noSelection')
     if(getCurrentView() === VIEWS.settings){
         animateSettingsTabRefresh()
     }
     setLaunchEnabled(serv != null)
 }
 // Real text is set in uibinder.js on distributionIndexDone.
-server_selection_button.innerHTML = '&#8226; ' + Lang.queryJS('landing.selectedServer.loading')
+server_selection_name.textContent = Lang.queryJS('landing.selectedServer.loading')
 server_selection_button.onclick = async e => {
-    e.target.blur()
+    e.currentTarget.blur()
     await toggleServerSelection(true)
 }
 
@@ -235,34 +280,61 @@ const refreshMojangStatuses = async function(){
     document.getElementById('mojang_status_icon').style.color = MojangRestAPI.statusToHex(status)
 }
 
+const OFFLINE_ERROR_CODES = new Set(['ECONNREFUSED', 'ETIMEDOUT', 'EHOSTUNREACH', 'ENETUNREACH', 'ENOTFOUND', 'EAI_AGAIN', 'ECONNRESET'])
+
+function isServerMaintenance(){
+    return Lang.query('custom.serverMaintenance') === true
+}
+
+function setServerStatus(state, tooltip){
+    const wrapper = document.getElementById('server_status_wrapper')
+    wrapper.dataset.state = state
+    document.getElementById('landingPlayerLabel').textContent = Lang.queryJS('landing.serverStatus.label')
+    document.getElementById('player_count').textContent = Lang.queryJS(`landing.serverStatus.${state}`)
+    if(tooltip){
+        wrapper.title = tooltip
+    } else {
+        wrapper.removeAttribute('title')
+    }
+}
+
 const refreshServerStatus = async (fade = false) => {
     loggerLanding.info('Refreshing Server Status')
-    const serv = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
 
-    let pLabel = Lang.queryJS('landing.serverStatus.server')
-    let pVal = Lang.queryJS('landing.serverStatus.offline')
+    let state = 'unknown'
+    let tooltip = null
 
     try {
-
-        const servStat = await getServerStatus(47, serv.hostname, serv.port)
-        pLabel = Lang.queryJS('landing.serverStatus.players')
-        pVal = servStat.players.online + '/' + servStat.players.max
-
+        const serv = (await DistroAPI.getDistribution()).getServerById(ConfigManager.getSelectedServer())
+        if(serv == null) throw new Error('No server selected.')
+        try {
+            const servStat = await getServerStatus(47, serv.hostname, serv.port)
+            state = 'online'
+            tooltip = Lang.queryJS('landing.serverStatus.players', { online: servStat.players.online, max: servStat.players.max })
+        } catch (err) {
+            const code = err && (err.code || (err.cause && err.cause.code))
+            state = (code == null || OFFLINE_ERROR_CODES.has(code)) ? 'offline' : 'error'
+            loggerLanding.warn('Unable to refresh server status, assuming ' + state + '.')
+            loggerLanding.debug(err)
+        }
     } catch (err) {
-        loggerLanding.warn('Unable to refresh server status, assuming offline.')
+        state = 'error'
+        loggerLanding.warn('Unable to resolve the selected server.')
         loggerLanding.debug(err)
     }
+
+    if(isServerMaintenance()){
+        state = 'maintenance'
+    }
+
     if(fade){
         $('#server_status_wrapper').fadeOut(250, () => {
-            document.getElementById('landingPlayerLabel').innerHTML = pLabel
-            document.getElementById('player_count').innerHTML = pVal
+            setServerStatus(state, tooltip)
             $('#server_status_wrapper').fadeIn(500)
         })
     } else {
-        document.getElementById('landingPlayerLabel').innerHTML = pLabel
-        document.getElementById('player_count').innerHTML = pVal
+        setServerStatus(state, tooltip)
     }
-    
 }
 
 refreshMojangStatuses()
@@ -659,47 +731,13 @@ let newsGlideCount = 0
  * @param {boolean} up True to slide up, otherwise false. 
  */
 function slide_(up){
-    const lCUpper = document.querySelector('#landingContainer > #upper')
-    const lCLLeft = document.querySelector('#landingContainer > #lower > #left')
-    const lCLCenter = document.querySelector('#landingContainer > #lower > #center')
-    const lCLRight = document.querySelector('#landingContainer > #lower > #right')
-    const newsBtn = document.querySelector('#landingContainer > #lower > #center #content')
-    const landingContainer = document.getElementById('landingContainer')
-    const newsContainer = document.querySelector('#landingContainer > #newsContainer')
-
     newsGlideCount++
-
-    if(up){
-        lCUpper.style.top = '-200vh'
-        lCLLeft.style.top = '-200vh'
-        lCLCenter.style.top = '-200vh'
-        lCLRight.style.top = '-200vh'
-        newsBtn.style.top = '130vh'
-        newsContainer.style.top = '0px'
-        //date.toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: 'numeric'})
-        //landingContainer.style.background = 'rgba(29, 29, 29, 0.55)'
-        landingContainer.style.background = 'rgba(0, 0, 0, 0.50)'
-        setTimeout(() => {
-            if(newsGlideCount === 1){
-                lCLCenter.style.transition = 'none'
-                newsBtn.style.transition = 'none'
-            }
-            newsGlideCount--
-        }, 2000)
-    } else {
-        setTimeout(() => {
-            newsGlideCount--
-        }, 2000)
-        landingContainer.style.background = null
-        lCLCenter.style.transition = null
-        newsBtn.style.transition = null
-        newsContainer.style.top = '100%'
-        lCUpper.style.top = '0px'
-        lCLLeft.style.top = '0px'
-        lCLCenter.style.top = '0px'
-        lCLRight.style.top = '0px'
-        newsBtn.style.top = '10px'
-    }
+    document.getElementById('landingContainer').classList.toggle('news-open', up)
+    document.getElementById('newsButton').setAttribute('aria-expanded', String(up))
+    AppBackground.setNewsOpen(up)
+    setTimeout(() => {
+        newsGlideCount--
+    }, 450)
 }
 
 // Bind news button.
@@ -710,7 +748,7 @@ document.getElementById('newsButton').onclick = () => {
         $('#newsContainer *').attr('tabindex', '-1')
     } else {
         $('#landingContainer *').attr('tabindex', '-1')
-        $('#newsContainer, #newsContainer *, #lower, #lower #center *').removeAttr('tabindex')
+        $('#newsContainer, #newsContainer *, #newsButton').removeAttr('tabindex')
         if(newsAlertShown){
             $('#newsButtonAlert').fadeOut(2000)
             newsAlertShown = false
@@ -899,7 +937,6 @@ async function initNews(){
         displayArticle(newsArr[0], 1)
         await $('#newsContent').fadeIn(250).promise()
     }
-
 
 }
 

@@ -1,12 +1,12 @@
 ## TODO: 
 - [x] Discord login and validation on each launch
   - [x] Handle an error when the user is not a part of designated discord server
-- [ ] UI overhaul (images, icons, remove unused UI elements)
+- [X] UI overhaul (images, icons, remove unused UI elements)
   - [x] Server status (bound to Westeros) | Fixed
   - [x] Mojang status (fuck them guys)
   - [x] News feed (?)
 - [ ] Add Ukrainian language support and translation
 - [x] Figure out auto-update and remove it if necessary
-- [ ] UI Scaling (?)
+- [x] UI Scaling (?) - Idi nahooi, mig bi i zrobit.
 - [ ] Update readme
 ---

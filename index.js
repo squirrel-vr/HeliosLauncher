@@ -130,7 +130,7 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, (ipcEvent, ...arguments_) => {
         width: 520,
         height: 600,
         frame: true,
-        icon: getPlatformIcon('SealCircle')
+        icon: getPlatformIcon('launcher-icon')
     })
 
     msftAuthWindow.on('closed', () => {
@@ -148,8 +148,8 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGIN, (ipcEvent, ...arguments_) => {
             let queryMap = {}
             
             new URL(uri).searchParams.forEach((v, k) => {
-                queryMap[k] = v;
-            });
+                queryMap[k] = v
+            })
 
             ipcEvent.reply(MSFT_OPCODE.REPLY_LOGIN, MSFT_REPLY_TYPE.SUCCESS, queryMap, msftAuthViewSuccess)
 
@@ -181,7 +181,7 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
         width: 520,
         height: 600,
         frame: true,
-        icon: getPlatformIcon('SealCircle')
+        icon: getPlatformIcon('launcher-icon')
     })
 
     msftLogoutWindow.on('closed', () => {
@@ -217,7 +217,6 @@ ipcMain.on(MSFT_OPCODE.OPEN_LOGOUT, (ipcEvent, uuid, isLastAccount) => {
     msftLogoutWindow.removeMenu()
     msftLogoutWindow.loadURL('https://login.microsoftonline.com/common/oauth2/v2.0/logout')
 })
-
 
 // Discord Auth
 let dsLoginWindow
@@ -290,45 +289,37 @@ ipcMain.on(DISCORD_OPCODE.OPEN_LOGIN, async (ipcEvent) => {
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-async function createWindow() {
-
+function createWindow() {
     win = new BrowserWindow({
-        width: 980,
-        height: 552,
-        icon: getPlatformIcon('SealCircle'),
-        frame: false,
+        width: 1280,
+        height: 720,
+        minWidth: 960,
+        minHeight: 540,
+        useContentSize: true,
+        // show: false, //why????
+        frame: true,
+        resizable: true,
+        fullscreenable: true,
+        icon: getPlatformIcon('launcher-icon'),
         webPreferences: {
             preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
             nodeIntegration: true,
             contextIsolation: false
         },
-        backgroundColor: '#171614'
+        backgroundColor: '#0A0F1C'
     })
     remoteMain.enable(win.webContents)
 
-    let bkid
-
-    if (REMOTE_BACKGROUND_IMAGES_URL) {
-        const response = await fetch(REMOTE_BACKGROUND_IMAGES_URL)
-        const text = await response.text()
-
-        const urls = text.split('|||').map(url => url.trim()).filter(url => !!url)
-        bkid = urls[Math.floor((Math.random() * urls.length))]
-    } else {
-        bkid = Math.floor((Math.random() * fs.readdirSync(path.join(__dirname, 'app', 'assets', 'images', 'backgrounds')).length))
-    }
-
     const data = {
-        bkid,
         lang: (str, placeHolders) => LangLoader.queryEJS(str, placeHolders)
     }
     Object.entries(data).forEach(([key, val]) => ejse.data(key, val))
 
     win.loadURL(pathToFileURL(path.join(__dirname, 'app', 'app.ejs')).toString())
 
-    /*win.once('ready-to-show', () => {
+    win.once('ready-to-show', () => {
         win.show()
-    })*/
+    })
 
     win.removeMenu()
 

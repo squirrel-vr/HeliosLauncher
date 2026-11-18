@@ -1,44 +1,46 @@
 [ejs.landing]
-updateAvailableTooltip = "Update Available"
-usernamePlaceholder = "Username"
-usernameEditButton = "Edit"
-settingsTooltip = "Settings"
-serverStatus = "SERVER"
-serverStatusPlaceholder = "OFFLINE"
+updateAvailableTooltip = "Доступне оновлення"
+usernamePlaceholder = "Акаунт"
+usernameEditButton = "Керування акаунтами"
+settingsTooltip = "Налаштування"
+serverStatus = "Статус серверу"
+serverStatusPlaceholder = "невідомо"
 mojangStatus = "MOJANG STATUS"
 mojangStatusTooltipTitle = "Services"
 mojangStatusNETitle = "Non&nbsp;Essential"
-newsButton = "NEWS"
-launchButton = "PLAY"
-launchButtonPlaceholder = "&#8226; No Server Selected"
-launchDetails = "Please wait.."
+newsButton = "Новини"
+newsCloseButton = "Закрити"
+launchButton = "Грати"
+launchButtonPlaceholder = "Сервер не вибрано"
+launchDetails = "Зачекайте..."
 newsNavigationStatus = "{currentPage} of {totalPages}"
 newsErrorLoadSpan = "Checking for News.."
 newsErrorFailedSpan = "Failed to Load News"
 newsErrorRetryButton = "Try Again"
 newsErrorNoneSpan = "No News"
+discordLinkLabel = "Discord-спільнота VRUkraine"
 
 [ejs.login]
-loginCancelText = "Cancel"
-loginSubheader = "MINECRAFT LOGIN"
-loginEmailError = "* Invalid Value"
-loginEmailPlaceholder = "EMAIL OR USERNAME"
+loginCancelText = "Скасувати"
+loginSubheader = "Створення офлайн-акаунту"
+loginEmailError = "Нік: 3–16 символів (латиниця, цифри, _)"
+loginEmailPlaceholder = "Введіть свій нік..."
 loginPasswordError = "* Required"
 loginPasswordPlaceholder = "PASSWORD"
 loginForgotPasswordLink = "https://minecraft.net/password/forgot/"
 loginForgotPasswordText = "forgot password?"
 loginRememberMeText = "remember me?"
-loginButtonText = "LOGIN"
+loginButtonText = "Зберегти"
 loginNeedAccountLink = "https://minecraft.net/store/minecraft-java-edition/"
 loginNeedAccountText = "Need an Account?"
 loginPasswordDisclaimer1 = "Your password is sent directly to mojang and never stored."
 loginPasswordDisclaimer2 = "{appName} is not affiliated with Mojang AB."
 
 [ejs.loginOptions]
-loginOptionsTitle = "Login Options"
-loginWithMicrosoft = "Login with Microsoft"
-loginWithMojang = "Login with Offline Account"
-cancelButton = "Cancel"
+loginOptionsTitle = "Увійдіть в Microsoft-акаунт, якщо в вас є ліцензія<br>або створіть офлайн-акаунт."
+loginWithMicrosoft = "Увійти через Microsoft"
+loginWithMojang = "Використовувати офлайн аккаунт"
+cancelButton = "Скасувати"
 
 [ejs.overlay]
 serverSelectHeader = "Available Servers"
@@ -124,11 +126,7 @@ whatsNew = "What's New"
 updateReleaseNotes = "Update Release Notes"
 
 [ejs.waiting]
-waitingText = "Waiting for Microsoft.."
-
-[ejs.welcome]
-continueButton = "CONTINUE"
-
+waitingText = "Очікуємо на Microsoft..."
 
 [js.discord]
 waiting = "Waiting for Client.."
@@ -139,14 +137,14 @@ microsoftLoginTitle = "Microsoft Login"
 microsoftLogoutTitle = "Microsoft Logout"
 
 [js.login]
-login = "LOGIN"
-loggingIn = "LOGGING IN"
-success = "SUCCESS"
-tryAgain = "Try Again"
+login = "Зберегти"
+loggingIn = "Зберігаємо..."
+success = "Збережено"
+tryAgain = "Спробувати ще раз"
 
 [js.login.error]
-invalidValue = "* Invalid Value"
-requiredValue = "* Required"
+invalidValue = "Нік: 3–16 символів (латиниця, цифри, _)"
+requiredValue = "Введіть нік"
 
 [js.login.error.unknown]
 title = "Unknown Error During Login"
@@ -159,16 +157,21 @@ failureText = "See console (CTRL + Shift + i) for more details."
 okay = "Okay"
 
 [js.landing.selectedAccount]
-noAccountSelected = "No Account Selected"
+noAccountSelected = "Акаунт не вибрано"
 
 [js.landing.selectedServer]
-noSelection = "No Server Selected"
-loading = "Loading.."
+noSelection = "Сервер не вибрано"
+loading = "Завантаження..."
 
 [js.landing.serverStatus]
-server = "SERVER"
-offline = "OFFLINE"
-players = "PLAYERS"
+server = "Статус серверу"
+offline = "офлайн"
+players = "Гравців онлайн: {online} / {max}"
+label = "Статус серверу"
+online = "онлайн"
+error = "помилки"
+unknown = "невідомо"
+maintenance = "обслуговуємо"
 
 [js.landing.systemScan]
 checking = "Checking system info.."
@@ -342,3 +345,16 @@ gameNotPurchasedTitle = "Error During Login:<br>Game Not Purchased"
 gameNotPurchasedDesc = "The account you are trying to login with has not purchased a copy of Minecraft. You may purchase a copy on <a href=\"https://minecraft.net/\">Minecraft.net</a>"
 unknownErrorTitle = "Unknown Error During Login"
 unknownErrorDesc = "An unknown error has occurred. Please see the console for details."
+
+[ejs.discordLogin]
+title = "Щоб користуватися лаунчером, увійдіть у свій Discord-акаунт.<br>Так ми підтвердимо, що ви є членом спільноти VRUkraine."
+login = "Увійти через Discord"
+authError = "Помилка автентифікації. Спробуйте пізніше або увійдіть в інший акаунт."
+notAMemeber = "Цей акаунт не є учасником спільноти VRUkraine. Приєднайтеся до Discord-сервера або увійдіть в інший акаунт."
+
+[js.landing.launchState]
+default = "Грати"
+downloading = "Завантаження..."
+validating = "Валідація файлів"
+starting = "Запускаємо"
+

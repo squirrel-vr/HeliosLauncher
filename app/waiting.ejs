@@ -1,8 +1,9 @@
 <div id="waitingContainer" style="display: none;">
-    <div id="waitingContent">
-        <div class="waitingSpinner"></div>
-        <div id="waitingTextContainer">
-            <h2><%- lang('waiting.waitingText') %></h2>
+    <%- include('authHeader') %>
+    <div class="auth-stage">
+        <div id="waitingContent">
+            <p class="auth-text" id="waitingText" role="status"><%- lang('waiting.waitingText') %></p>
+            <div class="indeterminate" aria-hidden="true"><div class="indeterminate__bar"></div></div>
         </div>
     </div>
 </div>

@@ -1,14 +1,12 @@
 {
   "name": "vrua-helioslauncher",
-  "version": "2.2.2",
+  "version": "3.0.0",
   "productName": "VR Ukraine MC Launcher",
   "description": "Modded Minecraft Launcher for VR Ukraine Community",
-  "author": "Daniel Scalzi (https://github.com/dscalzi/)",
+  "author": "squirrel-vr",
+  "original": "dscalzi/HeliosLauncher",
   "license": "UNLICENSED",
-  "homepage": "https://github.com/dscalzi/HeliosLauncher",
-  "bugs": {
-    "url": "https://github.com/dscalzi/HeliosLauncher/issues"
-  },
+  "homepage": "https://github.com/squirrel-vr/HeliosLauncher",
   "private": true,
   "main": "index.js",
   "scripts": {
@@ -48,6 +46,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dscalzi/HeliosLauncher.git"
+    "url": "git+https://github.com/squirrel-vr/HeliosLauncher.git"
   }
 }

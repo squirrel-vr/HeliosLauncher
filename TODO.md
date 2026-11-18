@@ -8,5 +8,5 @@
 - [ ] Add Ukrainian language support and translation
 - [x] Figure out auto-update and remove it if necessary
 - [x] UI Scaling (?) - Idi nahooi, mig bi i zrobit.
-- [ ] Update readme
+- [x] Update readme
 ---

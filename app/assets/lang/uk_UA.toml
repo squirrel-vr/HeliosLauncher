@@ -165,13 +165,13 @@ loading = "Завантаження..."
 
 [js.landing.serverStatus]
 server = "Статус серверу"
-offline = "офлайн"
-players = "Гравців онлайн: {online} / {max}"
+offline = "Офлайн"
+players = "гравців: {online} / {max}"
 label = "Статус серверу"
-online = "онлайн"
-error = "помилки"
-unknown = "невідомо"
-maintenance = "обслуговуємо"
+online = "Онлайн"
+error = "Помилки"
+unknown = "Невідомо"
+maintenance = "Обслуговуємо"
 
 [js.landing.systemScan]
 checking = "Checking system info.."

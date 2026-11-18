@@ -293,6 +293,7 @@ function setServerStatus(state, tooltip){
     document.getElementById('player_count').textContent = Lang.queryJS(`landing.serverStatus.${state}`)
     if(tooltip){
         wrapper.title = tooltip
+        document.getElementById('player_count').textContent = document.getElementById('player_count').textContent + ' ' + tooltip
     } else {
         wrapper.removeAttribute('title')
     }
